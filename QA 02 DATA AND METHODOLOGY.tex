@@ -1,0 +1,77 @@
+% --------------------- DATA & METHODOLOGY ----------------------------
+\section{Data and Methodology}
+\label{sec:data}
+
+\subsection{Data}
+
+The investable universe is the OSEAX (the parent index from which OSEBX constituents are drawn). For every OSEAX firm and every rebalancing event between January 2006 and March 2023, four predictors are extracted from Bloomberg \parencite{bloomberg-terminal,bloomberg-professional-services-BQL} at three forecast horizons --- 30, 60, and 100 trading days before ED:
+\begin{itemize}\itemsep0pt
+\item \texttt{trading\_status}: share of trading days the stock is active in the look-back window;
+\item \texttt{turnover\_eob}: 12-month electronic-order-book turnover, trimmed of the 12 highest-turnover days;
+\item \texttt{free\_float}: free-float-adjusted market capitalisation;
+\item \texttt{icb\_supersector}: the firm's ICB super-sector classification \parencite{industry-classification-benchmark} (factor variable).
+\end{itemize}
+These are the four variables that Euronext itself uses to construct OSEBX \parencite{OSEBX-rule-book}, so the model is restricted to information actually available at the cut-off date. Four lags of the binary membership variable $Y_{i,t-1},\dots,Y_{i,t-4}$ are added to capture persistence (most large constituents stay, most small ones never enter). VWAP price series for the 2010--2023 backtest are obtained from Refinitiv DataStream \parencite{nhh-data-stream,lseg-refinitiv}; VWAP is preferred to closing prices because it more closely matches an institutional execution price \parencite{madhavan-vwap}. The Norwegian Fama--French factors and the risk-free rate are taken from \textcite{bernt-fama-french,bernt-risk-free}. After cleaning, the final panels contain 5{,}983, 5{,}924, and 5{,}891 firm-event observations for the 30-, 60- and 100-day horizons.
+
+\subsection{Predictive models}
+
+We compare two classifiers chosen to bracket the bias--variance spectrum.
+
+\paragraph{Logistic GLM.} A standard binomial GLM with logit link \parencite{glm-generalized-linear-models,berkson-logistic-regression},
+\begin{equation}
+\Pr\!\left(Y_{i,t}=1 \,\middle|\, X_{i,t}\right) \;=\; \frac{\exp(\beta^{\top}X_{i,t})}{1+\exp(\beta^{\top}X_{i,t})},
+\label{eq:glm}
+\end{equation}
+fitted by iteratively reweighted least squares. The GLM is interpretable but assumes a linear log-odds and is unable to learn interactions between, e.g.\ free float and sector.
+
+\paragraph{XGBoost.} The scalable gradient-boosted tree ensemble of \textcite{xgboost-a-scaleable-tree-boosting-system}, building on \textcite{schapire-the-strength-of-weak-learners}, \textcite{friedman-greedy-function-approximation}, and \textcite{friedman-additive-logistic-regression}. It minimises a regularised logistic objective
+\begin{equation}
+\mathcal{L}(\phi) \;=\; \sum_i \ell\!\left(y_i,\hat{y}_i^{(t-1)}+f_t(X_i)\right) \;+\; \Omega(f_t),\qquad
+\Omega(f) = \gamma T + \tfrac{1}{2}\lambda \lVert w \rVert^2,
+\label{eq:xgb}
+\end{equation}
+where each $f_t$ is a CART tree of $T$ leaves with weights $w$, and $\Omega$ penalises tree complexity. Splits are chosen by a second-order (Hessian) approximation of $\ell$. Hyperparameters are fixed across folds and reported in the appendix; we deliberately avoid per-fold tuning to keep the strategy reproducible and to limit look-ahead bias.
+
+\subsection{Conditional posterior probability threshold}
+\label{sec:cppt}
+
+A standard classifier outputs $\hat{p}_{i,t}=\Pr(Y_{i,t}=1 \mid X_{i,t})$ and predicts $\hat{Y}_{i,t}=\mathbf{1}\{\hat{p}_{i,t} > \theta\}$. Setting $\theta=0.5$ is symmetric in the two error types, but in our application the cost structure is highly asymmetric: each rebalancing produces only $\sim$5--10 true changes against $\sim$200 firms, so a model that minimises 0--1 loss converges to ``predict last period's label.'' That model has 95\% accuracy and zero economic value because it never produces a tradeable signal.
+
+To force the classifier off the persistence prior we condition the threshold on the previous-period state:
+\begin{equation}
+\theta^{\star}_{i,t} \;=\;
+\begin{cases}
+\theta + \varepsilon, & Y_{i,t-1}=1 \quad \text{(currently in the index)} \\[2pt]
+\theta - \varepsilon, & Y_{i,t-1}=0 \quad \text{(currently out of the index)}
+\end{cases}
+\qquad 0 < \theta^{\star}_{i,t} < 1.
+\label{eq:cppt}
+\end{equation}
+Setting $\varepsilon>0$ makes it strictly harder to confirm the persistence prediction and strictly easier to flip it: a current constituent must clear a higher bar to be predicted as ``stay,'' which mechanically increases the predicted-deletion count, and symmetrically for additions. Calibrating on the training data we set $\theta=0.6$ and $\varepsilon=0.2$. We refer to the resulting model as ``XGBC'' (XGBoost Custom) and to the unconditional benchmark as ``XGBB'' (XGBoost Benchmark).
+
+\subsection{Portfolio construction}
+
+For every rebalancing event $t$, the trained model produces a set of predicted additions $\mathcal{A}_t$ and predicted deletions $\mathcal{D}_t$. At the prediction date (30/60/100 days before ED) we open an equally-weighted long position in each name in $\mathcal{A}_t$ and an equally-weighted short position in each name in $\mathcal{D}_t$ \parencite{jacobs-long-short}, all closed at ED. Per-trade returns use VWAP at open and close,
+\begin{equation}
+r^{\text{long}}_i = \tfrac{p_1-p_0}{p_0},\qquad
+r^{\text{short}}_i = \tfrac{p_0-p_1}{p_0}, \qquad
+r_t^{A} = \tfrac{1}{|\mathcal{A}_t \cup \mathcal{D}_t|}\sum_{i \in \mathcal{A}_t \cup \mathcal{D}_t} r_i.
+\label{eq:retdef}
+\end{equation}
+Outside the active window the capital sits in OSEBX. Round-trip transaction costs \parencite{coase-transaction-costs} are 4 basis points per leg \parencite{dnb-transaction-costs}, short positions accrue interest at 4\% p.a.\ \parencite{nordnet-short-interest-rate}, and short losses are capped at $-100\%$ (forced buy-back). Time-series cross-validation \parencite{bergmeir-time-series-cross-validation} is used: at every event the training set is all data strictly prior to that event's CD, with no look-ahead.
+
+For the enhanced-index variant we hold OSEBX as the passive sleeve and overlay the active strategy at weight $s$, so the portfolio return is
+\begin{equation}
+r_t^{E} \;=\; s\cdot r_t^{A} + (1-s)\cdot r_t^{\text{OSEBX}},
+\label{eq:enhanced}
+\end{equation}
+with $s$ chosen, separately for each model, as the largest weight that keeps the realised annual tracking error against OSEBX below 2\% \parencite{ssg-tracking-error-enhanced}. Because the passive sleeve already holds the names that are about to be deleted, the short leg is funded by selling existing inventory --- we therefore drop the short-borrow charge for the enhanced variant.
+
+\subsection{Evaluation}
+
+We report classification metrics (accuracy, precision, sensitivity, specificity, F-score, AUROC) and financial metrics (mean monthly excess return $R_p-R_b$, monthly volatility $\sigma_p$, Sharpe ratio, CAPM alpha and beta following \textcite{sharpe-capital-asset-prices} and \textcite{markowitz-portfolio-selection}, annualised tracking error, information ratio). Risk-adjusted performance is tested with the three-factor regression of \textcite{fama-french-common-risk-factors-in-the-returns-on-stocks-and-bonds} on monthly portfolio excess returns,
+\begin{equation}
+R_{p,t}-R_{f,t} \;=\; \alpha^{\text{FF3}} + \beta_{\text{MKT}}(R_{m,t}-R_{f,t}) + \beta_{\text{SMB}}\,\text{SMB}_t + \beta_{\text{HML}}\,\text{HML}_t + \epsilon_t,
+\label{eq:ff3}
+\end{equation}
+using the Norwegian factors of \textcite{bernt-fama-french}. The market proxy is OSEAX because the published factors are constructed on the wider Oslo Stock Exchange universe, of which OSEAX is a closer match than OSEBX. The evaluation window is January 2010 -- May 2022 (148 monthly observations, the longest interval for which factor data are available).

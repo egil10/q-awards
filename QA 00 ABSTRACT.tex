@@ -1,0 +1,10 @@
+% --------------------------- ABSTRACT --------------------------------
+\begin{center}
+{\bfseries Abstract}
+\end{center}
+\noindent
+\small
+We use machine learning to predict semi-annual changes to the Oslo Stock Exchange Benchmark Index (OSEBX) ahead of the Euronext announcement date and translate those predictions into tradable portfolios that exploit the \emph{index effect} \parencite{shleifer-do-demand-curves-for-stocks-slope-down}. Two classifiers are estimated on the four constituent-selection variables published in the Euronext rule book \parencite{OSEBX-rule-book} --- trading status, free float, electronic-order-book turnover, and ICB sector --- plus four lags of index membership: a logistic Generalised Linear Model \parencite{glm-generalized-linear-models} and an eXtreme Gradient Boosting tree booster \parencite{xgboost-a-scaleable-tree-boosting-system}. To compensate for the strong class imbalance between additions and deletions, we introduce a \emph{conditional posterior probability threshold} that asymmetrically penalises the no-change prediction conditional on the previous-period membership state. Trained period-by-period on data from 2006--2009 and evaluated on 26 rebalancing events from 2010 to 2023, all models achieve out-of-sample classification accuracy above 92\% even 100 trading days before the effective date, with AUROC above 0.97. Simulating equally-weighted long--short portfolios that buy predicted additions and short predicted deletions yields monthly excess returns over OSEBX of up to 0.95\% (GLM) and 0.32\% (XGBoost with conditional threshold), with statistically significant Fama--French three-factor alphas (\textit{p}\,$<$\,0.05) over a 13-year backtest. Embedding the strategy as the active sleeve of an enhanced-index portfolio constrained to a 2\% annual tracking error preserves a significant XGBoost alpha (\textit{p}\,$<$\,0.10). Our central finding is that for a transparent, rule-based index, predictive accuracy and exploitable alpha trade off non-trivially: the most accurate model in the cross-section is the trivial persistence baseline, which produces no tradeable signal at all.
+\normalsize
+
+\vspace{1em}

@@ -1,0 +1,82 @@
+%\documentclass[final,5p,times,twocolumn,authoryear]{elsarticle}
+
+% ----------- Removing the first page that causes trouble -----------
+\usepackage{atbegshi}% http://ctan.org/pkg/atbegshi
+\AtBeginDocument{\AtBeginShipoutNext{\AtBeginShipoutDiscard}}
+
+% ----------- Define document class ---------------------------------
+\documentclass[english, a4paper, 12pt, twoside]{article} 
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+
+\input{00 PACKAGES}
+
+% bibliography using APA
+\usepackage[style=apa, backend=biber, natbib=true]{biblatex}
+
+\addbibresource{00 bib.bib} % Make sure this matches the name of your BibTeX file
+\setlength{\parskip}{1em} % Adjusts the space between paragraphs
+\setlength{\parindent}{0pt} % Removes indentation at the
+
+%\usepackage[font=singlespacing]{subcaption}
+
+
+
+
+% Begin document
+
+
+% adding correct page number formatting
+\pagenumbering{roman}
+
+\begin{document}
+
+\input{00 COVER}
+
+\clearpage
+\thispagestyle{empty}
+\hfill
+
+\clearpage% \input{00 FRONTMATTER}
+\newpage
+\input{07 ACKNOWLEDGEMENTS}
+\newpage
+\input{00 ABSTRACT}
+\newpage
+
+
+
+\tableofcontents\thispagestyle{fancy}
+\newpage
+\listoffigures\thispagestyle{fancy}
+\newpage
+
+\listoftables\thispagestyle{fancy}
+\newpage
+
+% Main text
+\pagenumbering{arabic}
+\input{01 INTRODUCTION}
+\newpage
+\input{02 THEORETICAL BACKGROUND}
+\newpage
+\input{03 METHODOLOGY}
+\newpage
+\input{04 DATA}
+\newpage
+\input{05 RESULTS AND DISCUSSION}
+\newpage
+\input{06 SUMMARY AND CONCLUSIONS}
+
+\newpage
+
+\printbibliography[heading=bibintoc]
+\newpage
+
+\input{08 APPENDIX}
+
+% End document 
+\end{document}

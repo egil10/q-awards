@@ -1,0 +1,37 @@
+\section{Summary and Conclusions}
+\label{Summary and conclusions}
+
+In this thesis, we have investigated the practical application of exploiting the index effect on OSEBX using ML. We did this by using GLM and XGBoost ML models, predicting upcoming changes to OSEBX, by using data variables from Euronext in the OSEBX index methodology. We simulated a portfolio of trading on ML predictions from 2010 to 2023, in both an active trading and enhanced index strategy. Lastly, we analysed the returns from the simulated portfolios.
+
+Our three research questions were to determine (1) "To what degree can machine learning algorithms predict the index composition of OSEBX in the next period?", (2) "To what degree can trading on predicted additions and deletions outperform OSEBX in an active trading portfolio?", and (3) "To what degree can trading on predicted additions and deletions outperform OSEBX in an enhanced index portfolio?". 
+
+(1) We found that it is possible to obtain high accuracy when predicting if a company will be on OSEBX or not in the next period. We obtained more than 95\% accuracy simply by using a lagged variable of the target variable. However, it proved to be more difficult when predicting the actual additions and deletions on OSEBX. By using conditional PPT in XGBoost, we were able to increase the total number of true predicted changes, with the trade-off being lower total accuracy. 
+
+(2) When simulating the active trading portfolios over time, we found that several portfolios were able to outperform OSEBX, both in terms of $R_p$, SR, $\sigma_p$, $\alpha_{CAPM}$ and $\alpha_{FF3}$. In short, both the high-risk high-return GLM100 and GLM60 models, and the lower-risk XGBC30 model were able to create excess returns compared to OSEBX. The key insight is that our findings suggest that the index effect can be exploited by two different approaches. We also point out that the introduction of the conditional PPT in the XGBoost Custom models seems to have served its purpose, as the XGBC30 model proved to be significantly less volatile (yet yielding formidable returns) than the competing GLM portfolios.
+
+(3) Lastly, we also found that trading on recommendations from ML models was able to outperform OSEBX in enhanced index portfolios, even when operating within an annual TE of 2\%. The GLM portfolios gave tiny active shares in the enhanced index portfolio, because of their volatile nature. On the other hand, the XGBC30 enhanced index portfolio still performed well and was the only portfolio able to generate alpha in FF3 within a 10\% confidence level. 
+
+Moreover, we would like to draw a more general conclusion based on our findings in this thesis. Assuming we were able to outperform OSEBX, we want to point out the effect of applying machine learning in practice. We have, as mentioned several times throughout this thesis, found that accuracy is not necessarily the ultimate measurement of assessing model performance. We have in our case shown several times that even the least accurate models can create the most diversified and high-yielding portfolios. The conclusions drawn from this work do therefore come down to the following: one should clearly understand the problem objective before making a predictive ML model. This can in turn broaden the horizon to which one can apply machine learning. If we in this thesis had gone with the model showing the highest accuracy, we would not have been able to exploit anything - because that model predicted no additions nor deletions to OSEBX at all.
+
+\subsection{Robustness of Findings}
+
+In this thesis, we made several assumptions regarding finance and methodology. As with any findings, the performance is dependent on underlying assumptions. 
+Regarding our findings in the first research question, the robustness will depend on several factors, including the quality of the data set and our understanding of the official OSEBX rule book. In practice, we faced several missing values in the data set, where we then decided to delete the row rather than trying to find the exact data point. Deleting rows from the data frame can in turn decrease robustness, which creates for a weakness in our data set and models.
+
+When it comes to the second and third research questions, there are also several factors to consider. The first one is the financial assumptions made throughout this thesis. We have, as far as we could, tried to use assumptions that mirror real-world trading. There is no doubt that changing the financial assumptions will affect the results presented in this thesis, and whether or not the assumptions represent real-world trading is open for debate. Also, the FF3 regressions come with some setbacks. Firstly, we have used risk factors that do not specifically represent the exact market we defined. This can cause misleading regression results, and the results should be interpreted carefully. Furthermore, we point out that by using only three risk factors, we are not necessarily capturing the entire risk picture. We could have used several more risk factors in our regressions, but due to the lack of available factors in the Norwegian market, we only used the FF3 model with 3 factors. This is therefore another weakness in our findings. 
+
+Regarding the portfolio simulations, we are also facing some issues challenging the robustness. This is mainly due to missing data in the VWAP data frame. When running the simulations, we have gathered data from this data frame to simulate the portfolio development. Several times we have experienced issues with companies (especially in 2010 and 2011) lacking VWAP. This is a limitation to the simulations, as we then have been forced to drop those predictions from the simulations.
+
+Furthermore, we optimised the enhanced index strategy for TE$_{ann}$ at 2\%. This is in the upper range for accepted TE for an enhanced index fund. In the enhanced index strategy, a lower TE would in turn mean lower excess returns. 
+
+\subsection{Practical Recommendations}
+
+Practically, one can go further in optimising the trading strategy discussed in \autoref{Results and discussion}, which we have not done in this thesis. Possible improvements can be made for (1) time horizon, (2) $\varepsilon$ in the conditional PPT, (3) hyper-parameter tuning, and (4) weighting of the different securities in the portfolios. In sum, trading on the index effect using ML may be optimised further. Despite this, we conclude that our portfolio simulation shows high performance, while still maintaining a low degree of manual intervention and a high degree of repeatability. 
+
+
+\subsection{Further Research}
+
+Furthermore, this thesis indicates that there \textit{may} be somewhat of a market inefficiency, surrounding the index rebalancing events on OSEBX. We argue that the addition or deletion of a stock does not change the immediate underlying value of the company, so if EMH holds, we should not have been able to exploit the index effect. Therefore it would be of great interest to know if the index effect is a current phenomenon on OSEBX, or if it will continue to exist in the future with more and more investors being aware of it. To fully understand the index effect, one should therefore investigate other indices, which differ from OSEBX in both market size and maturity. 
+
+
+

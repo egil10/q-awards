@@ -1,0 +1,66 @@
+% =====================================================================
+%  CFA Quant Awards 2026 — Submission Paper (DRIVER)
+%  Distilled from a 100+ page Master's thesis into a 5–7 page format.
+%
+%  Compile with:  pdflatex -> biber -> pdflatex -> pdflatex
+%  Image paths reuse the originals from the source thesis (./images/...)
+%  Bibliography reuses the original 00 bib.bib (APA, biber backend).
+% =====================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+% --- packages --------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage[style=apa, backend=biber, natbib=true]{biblatex}
+\addbibresource{00 bib.bib}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% --------------------------- COVER PAGE ------------------------------
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{4cm}
+\begin{center}
+{\large CFA Quant Awards 2026}\\[6cm]
+{\LARGE\bfseries Exploiting the Index Effect on the\\[0.3em]
+Oslo Stock Exchange Benchmark with\\[0.3em]
+Machine Learning}\\[2em]
+\end{center}
+\end{titlepage}
+
+% --------------------------- BODY ------------------------------------
+\setcounter{page}{1}
+
+\input{QA 00 ABSTRACT}
+
+\input{QA 01 INTRODUCTION}
+
+\input{QA 02 DATA AND METHODOLOGY}
+
+\input{QA 03 RESULTS}
+
+\input{QA 04 CONCLUSION}
+
+% ------------------------ REFERENCES ---------------------------------
+\printbibliography[heading=bibintoc,title={References}]
+
+\end{document}

@@ -1,0 +1,238 @@
+% ----------- DEFINING COLOUR LINKS ---------------------
+\usepackage{xcolor} % For colors
+\usepackage{hyperref} % For hyperlinks
+\hypersetup{
+    colorlinks=true, % Set to true to enable colored links
+    linkcolor={0 0.68 0.94}, % Internal links color (light blue)
+    citecolor={0 0.68 0.94}, % Reference links color (light blue)
+    urlcolor={0 0.68 0.94} % External URL links color (light blue)
+}
+\definecolor{lightlightgreen}{rgb}{0.9, 1, 0.9} % Very light green
+\definecolor{lightlightred}{rgb}{1, 0.9, 0.9} % Very light red
+
+
+% -------------- FORMATTING PAGE -------------------------
+\linespread{1.5} % line spread for the document
+\usepackage[margin=1in]{geometry} % defining the page margin
+
+% --------------- FORMATTING THE APPENDIX ------------------
+\usepackage[titletoc,title]{appendix}
+\newcommand{\appref}[1]{Appendix~\ref{#1}}
+
+% -------------- PACKAGES FOR FORMATTING TABLES AND IMAGES -----------
+\usepackage{rotating}
+\usepackage{algpseudocode}
+\newcommand{\algorithmautorefname}{Algorithm}
+\usepackage{longtable} % formatting for large tables
+\usepackage{amssymb}
+\usepackage{tabularx}  % important for table formatting
+\usepackage{graphicx}  % important for figure formatting
+\setkeys{Gin}{width=\linewidth,keepaspectratio} % for table and image format
+\newcommand{\kms}{km\,s$^{-1}$} % for table and image format
+\newcommand{\msun}{$M_\odot} % for table and image format
+\titleformat{\section}
+  {\bfseries\LARGE}{\thesection}{1em}{}  
+\usepackage{booktabs} % for better table formatting
+\usepackage{subcaption} % for subfigures
+
+%\usepackage{array}
+
+%------ APCKAGES FROM NHH TEMPLATEW --------------------
+
+\addcontentsline{toc}{section}{00 bib.bib}
+
+\usepackage{textcomp}
+\usepackage[T1]{fontenc, url}
+\usepackage[utf8]{inputenc}
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\usepackage{multirow}
+%\usepackage{minted} % Code highlighting
+\usepackage{adjustbox}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsthm} % Mathematical packages
+\usepackage{parskip} % Removing indenting in new paragraphs
+\urlstyle{sf}
+\usepackage{color}
+\usepackage{subcaption} 
+\usepackage{appendix}
+\usepackage{chngcntr} % needed for correct table numbering
+\counterwithin{table}{section} % numbering of tables 
+\counterwithin{figure}{section} % numbering of figures
+\numberwithin{equation}{section} % numbering of equations
+\hyphenpenalty=100000 % preventing splitting of words
+\sloppy 
+\raggedbottom 
+\usepackage{xparse,nameref}
+
+\usepackage{fancyhdr}
+\usepackage{subfiles}
+\usepackage{array}
+\usepackage[rightcaption]{sidecap}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage[labelfont=bf]{caption} % bold text for captions
+\usepackage[para]{threeparttable} % fancy tables, check these before you use them
+\usepackage{url}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{makecell}
+\usepackage{hhline}
+
+% ------------- FORMATTING HEADER --------------------------
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%\fancyhf{}
+\pagestyle{fancy}
+\fancyhead[RE,LO]{\thepage} % page number on right for odd pages and left for even pages in the header
+\fancyhead[RO,LE]{\nouppercase{\leftmark}} % chapter name and number on the right for even pages and left for odd pages in the header
+%\renewcommand{\headrulewidth}{0pt} % sets thickness of header line
+\fancyfoot{} % removes page number on bottom of page
+
+% ----------- DEFINING HYPER REF COLOURS --------------------
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, % Enables colored links
+    linkcolor=blue, % Internal links color
+    citecolor=blue, % Reference links color (for citations)
+    urlcolor=blue % External URL links color
+}
+
+
+% -------------- CODE SNIPPETS -------------------------------
+\usepackage{listings} % for code listings
+\lstset{
+  basicstyle=\ttfamily,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
+\usepackage{algorithm} % for algorithms
+\usepackage{algorithmicx} % for algorithms
+\usepackage{microtype} % for micro-typographical adjustments
+\usepackage{footnote} % for footnotes
+\usepackage{marginnote} % for side notes
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{makecell} % To make cells more spacious
+\usepackage{multirow} % For multi-row cells
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{titlesec}
+
+% ----------- DEFINE MATH FONT -----------------
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math} % using a math font
+
+
+% \usepackage{stfloats}
+
+% ----------- FORMATTING CATIONS -----------------
+\usepackage{caption}
+\setlength{\abovecaptionskip}{0pt}
+\setlength{\belowcaptionskip}{0pt}
+\usepackage[labelfont=bf]{caption} % Keeps captions bold in the text
+\usepackage[font=footnotesize]{caption} 
+
+% formatting subcaption using the subcaption package
+\usepackage{subcaption}
+\usepackage[font=footnotesize]{subcaption} 
+%\usepackage[font=singlespacing]{subcaption}
+
+\usepackage{setspace}
+\newcommand{\mylinespacedsubcaption}[1]{
+    \begin{spacing}{0.8} % Adjust the 0.8 to your preferred line spacing
+    \subcaption{#1}
+    \end{spacing}
+}
+\usepackage[labelfont=bf]{caption}
+
+% -----------------ADDING BLANK PAGE AFTER COVER --------------------
+\usepackage{afterpage}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
+%--------------- FORMATTING TABLE OF CONTENT ----------------------
+%\usepackage{tocloft}
+% Change the link color temporarily for TOC, LOF, and LOT
+\renewcommand{\cftsecfont}{\hypersetup{linkcolor=blue}\normalfont}
+\renewcommand{\cftsubsecfont}{\hypersetup{linkcolor=blue}\normalfont}
+\renewcommand{\cftsecpagefont}{\hypersetup{linkcolor=blue}\normalfont} % for page numbers
+\renewcommand{\cftsubsecpagefont}{\hypersetup{linkcolor=blue}\normalfont} % for page numbers
+\setcounter{tocdepth}{2} % setting the level of TOC to display
+%\usepackage{tocloft}
+
+% ---------------- USE THIS TO ADJUST SIZE AND SPACE IN TOC ---------
+\usepackage[titles]{tocloft}
+\setlength{\cftbeforesecskip}{-1.1ex}
+\setlength{\cftbeforesubsecskip}{-1.1ex}
+
+\renewcommand{\cftsecfont}{\small\bf}
+\renewcommand{\cftsubsecfont}{\small}
+\renewcommand{\cftsubsubsecfont}{\small}
+
+% ---- FORMATIN LIST OF FIGURES
+\renewcommand{\cftfigfont}{\small}
+\setlength{\cftbeforefigskip}{-1ex}
+
+% ---- FORMATIN LIST OF TABLES
+\setlength{\cftbeforetabskip}{-1ex}
+\renewcommand{\cfttabfont}{\small}
+
+\captionsetup[figure]{font=bf}
+\captionsetup[table]{font=bf}
+
+
+\usepackage{rotating}
+
+\usepackage{listings}
+
+
+% Change font size for subsections in TOC
+%\renewcommand{\cftsubsecfont}{\small}
+
+% Change font size for subsubsections in TOC
+%\renewcommand{\cftsubsubsecfont}{\footnotesize}
+
+
+% Reduce line spacing for sections in TOC
+%\setlength{\cftbeforesecskip}{1pt}
+
+% Reduce line spacing for subsections in TOC
+%\setlength{\cftbeforesubsecskip}{0pt}
+
+% Reduce line spacing for subsubsections in TOC
+%\setlength{\cftbeforesubsubsecskip}{0pt}
+
+% Change font style for List of Figures entries to normal (not bold)
+%\renewcommand{\cftfigfont}{\normalfont}
+
+% Change font style for List of Tables entries to normal (not bold)
+%\renewcommand{\cfttabfont}{\normalfont}
+
+
+% Change font style for List of Figures entries to normal (not bold) and reduce the font size
+%\renewcommand{\cftfigfont}{\normalfont\small}
+
+% Ensure that the page numbers in LOF are also not bold
+%\renewcommand{\cftfigpagefont}{\normalfont\small}
+
+
+
+%\usepackage{colortbl}
+
+
+
+
+
+
+
+
+
+
+

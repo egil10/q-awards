@@ -1,0 +1,159 @@
+\section{Theoretical Background}
+\label{Theoretical background}
+% \setcounter{equation}{0}
+
+\subsection{Introduction to Theoretical background}
+
+In this section, we introduce the efficient market hypothesis (EMH) and discuss the index effect in this context. Furthermore, we present the foundation for financial metrics used in evaluating our portfolio simulations in \autoref{Results and discussion}. We discuss the financial metrics alpha $\alpha$ and beta $\beta$ both in the context of the Capital Asset Pricing Model (CAPM) and the Fama-French 3 Factor Model (FF3). We also look at more general financial metrics, such as return $R_p$, risk $\sigma_p$, Sharpe ratio (SR), tracking error (TE), and information ratio (IR). 
+
+\subsection{Efficient Market Hypothesis}
+
+\textcite{samuelson-proof-that-properly-anticipated-prices-are-random} posited the key principle of EMH in 1965, if a price movement could be predicted with certainty, it would have already occurred. The principle was furthered by \textcite{fama-efficient-capital-markets-a-review-of-theory-and-empirical-work}, who argued that security prices in EMH always fully incorporate available information. He categorised EMH into three forms, weak (reflecting historical prices), semi-strong (including all public information), and strong (encompassing all information, including insider insights) \parencite{fama-efficient-capital-markets-a-review-of-theory-and-empirical-work}.
+
+\subsection{Index Effect}
+
+According to EMH, stock prices reflect values of the underlying company \parencite{fama-efficient-capital-markets-2}. \textcite{jain-the-effect-on-stock-price-of-inclusion-or-exclusion-from-the-s&p-500} point out that announcements on AD of additions and deletions to S\&P 500 impact the publicly perceived investment appeal of stocks. If so, there exist price effects that do not reflect the underlying company \parencite{jain-the-effect-on-stock-price-of-inclusion-or-exclusion-from-the-s&p-500}. The index effect challenges EMH, which can have implications for index investing funds. 
+
+Index funds must periodically adjust their portfolio to replicate their benchmark index \parencite{investopedia-passive-and-active-funds}. Research by \textcite{blitz-fundamental-indexation-rebalancing-assumptions-and-performance} and \textcite{madhavan-the-hidden-cost-of-index-rebalancing} find that the timing of these adjustments can significantly impact fund performance and costs. \textcite{blitz-fundamental-indexation-rebalancing-assumptions-and-performance} find that adjusting portfolios during certain months outperform others. \textcite{madhavan-the-hidden-cost-of-index-rebalancing} find that spreading trades between AD and ED can reduce costs without major increased risk. If the timing of index rebalancing influences stock prices, this can challenge EMH \parencite{fama-the-adjustment-of-stock-prices-to-new-information}.
+
+\textcite{afego-effects-of-changes-in-stock-index-composition} find some possible reasons for the existence of the index effect, divided into demand and information-based hypotheses. Demand-based hypotheses view the effect as either temporary, where prices revert after the index rebalancing event (price pressure hypothesis), or permanent (imperfect substitute hypothesis) \parencite{afego-effects-of-changes-in-stock-index-composition}. Information-based hypotheses suggest that index rebalancing signal information to investors, additions/deletions imply positive/negative news (information hypothesis), increased liquidity affect prices (liquidity hypothesis), awareness of index changes affects behaviour (awareness hypothesis), and changes represent rule book criteria (selection criteria hypothesis) \parencite{afego-effects-of-changes-in-stock-index-composition}. There are several hypotheses for why the index effect exists. In this thesis, we are mainly interested in the fact that it \textit{does} seem to exist on OSEBX, as shown in \autoref{fig:index-effect-osebx}. 
+
+\subsection{Financial Metrics}
+
+\subsubsection{Risk and Return}
+
+\textcite{markowitz-portfolio-selection} laid the fundamental groundwork for understanding the trade-off between minimising risk $\sigma_p$ and maximising return $R_p$ in investment portfolios. The risk $\sigma_p$ of a portfolio with return $R_p$ is shown in \autoref{equation:markowitz-risk-and-return}.
+
+\begin{equation}
+\label{equation:markowitz-risk-and-return} 
+    \sigma_p = \sqrt{Var|R_p|}
+\end{equation}
+
+\subsubsection{Capital Asset Pricing Model}
+
+Building on portfolio theory work by \textcite{markowitz-portfolio-selection}, CAPM was developed independently by economists such as \textcite{sharpe-capital-asset-prices} and \textcite{mossin-equilibrium-in-a-capital-asset-market}. CAPM calculates an asset's expected theoretical return $E(R_i)$. It combines the risk-free rate $R_f$, the asset's beta $\beta_i$ indicating its relative risk, and market return minus risk-free rate $E(R_m) \minus R_f$ to represent the market premium. \autoref{equation:capm-return} expresses $E(R_i)$ in CAPM, and \autoref{equation:capm-abnormal-return} the abnormal return $AR_i$. 
+
+\begin{equation}
+\label{equation:capm-return}
+    E(R_i)=R_f+\beta_i \cdot [E(R_m)-R_f]
+\end{equation}
+\begin{equation}
+\label{equation:capm-abnormal-return}
+    AR_i = R_i - E(R_i)
+\end{equation}
+
+\subsubsection{Fama-French 3 Factor Model}
+
+In an extension of CAPM, \textcite{fama-french-common-risk-factors-in-the-returns-on-stocks-and-bonds} introduced new size and value risk factors, for a more accurate assessment of asset pricing and abnormal returns. FF3 recognises over-performance by small-cap (SMB) and high book-to-market (HML) ratio assets \parencite{fama-french-common-risk-factors-in-the-returns-on-stocks-and-bonds}. FF3 considers the market return $R_m$, risk-free rate $R_f$, portfolio alpha $\alpha$, and sensitivity to market $\beta_{i,M}$, size $\beta_{i,SMB}$, and value $\beta_{i,HML}$. The theoretical expected return $E(R_i)$ is shown in \autoref{equation:fama-french-return}.
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:fama-french-return}
+\begin{split}
+    E(R_i-R_f) = \alpha_i &+ \beta_{i,M} (R_M - R_f) \\ 
+    &+ \beta_{i,SMB} \cdot SMB \\ 
+    &+ \beta_{i,HML} \cdot HML + \epsilon_i 
+\end{split}
+\end{equation}
+
+In both CAPM and FF3, the cumulative return $CR$ from time $\tau_1$ over $\tau_2$ periods can be seen in \autoref{equation:cumulative-returns}. 
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:cumulative-returns}
+    CR(\tau_1, \tau_2) = \sum_{t=\tau_1}^{\tau_2} R_t
+\end{equation}
+
+\subsubsection{Alpha}
+
+Alpha ($\alpha$) is a key metric in finance, quantifying how an investment performs relative to the market \parencite{sharpe-capital-asset-prices}. It is the excess return of an investment over the predicted return based on its risk $\beta$. Positive alpha means the investment outperforms the market after adjusting for risk, while negative alpha indicates under-performance. It's calculated in CAPM and FF3 respectively in \autoref{equation:alpha-in-capm} and \autoref{equation:alpha-in-fama-french}.
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:alpha-in-capm}
+    \alpha_{CAPM} = R_i - [R_f + \beta_i (R_m - R_f)]
+\end{equation}
+\begin{equation}
+\label{equation:alpha-in-fama-french}
+\begin{split}
+    \alpha_{FF3} = R_i - [R_f &+ \beta_{i,M} (R_m - R_f) \\
+    &+ \beta_{i,SMB} \cdot SMB \\
+    &+ \beta_{i,HML} \cdot HML]
+\end{split}
+\end{equation}
+
+\subsubsection{Beta}
+
+Beta ($\beta$) is a crucial financial metric that measures the volatility, or systematic risk, of an investment in relation to the overall market \parencite{sharpe-capital-asset-prices}. It indicates how much an investment's price is expected to fluctuate compared to market movements. Generally, a beta greater than 1 implies higher volatility than the overall market, while a beta less than 1 indicates lower volatility. However, if a portfolio has a negative correlation with the market in some periods, this can reduce the beta even though the portfolio is more volatile than the market. It is shown in CAPM in \autoref{equation:beta-in-capm}. In FF3 one also uses the factors, as shown in \autoref{equation:beta-in-fama-french} for SMB. $Cov(R_i, R_m)$ is the covariance of the investment's return with the market return, and  $Var(R_m)$ is the variance of the market return. 
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:beta-in-capm}
+    \beta_i = \frac{Cov(R_i, R_m)}{Var(R_m)}
+\end{equation}
+\begin{equation}
+\label{equation:beta-in-fama-french}
+    \beta_{i,SMB} = \frac{Cov(R_i, SMB)}{Var(SMB)} 
+\end{equation}
+
+\subsubsection{Sharpe Ratio}
+
+SR is a measure of risk-adjusted return. In other words, it describes how much return an investment generates per unit of risk \parencite{sharpe-capital-asset-prices}. \autoref{equation:sharpe-ratio} show the SR, with the return of the investment $R_i$, with the risk-free rate $R_f$, and standard deviation $\sigma_i$. 
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:sharpe-ratio}
+    \text{SR} = \frac{R_i - R_f}{\sigma_i}
+\end{equation}
+
+\subsubsection{Tracking Error}
+
+TE is a measure used to indicate how closely a portfolio follows a benchmark index \parencite{roll-a-mean-variance-analysis-of-tracking-error}. \autoref{equation:tracking-error} shows the TE calculated as the standard deviation of the difference between returns of the portfolio $R_p$ and the benchmark index $R_b$. \autoref{equation:tracking-error-annually} show going from monthly to annual TE. DNB Global Enhanced Index \parencite*{dnb-global-enhanced-index} and \textcite{nbim-investing-in-equities} have a TE limit of 0.25-1.00\% and 1.00-1.50\% respectively.
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:tracking-error}
+    \text{TE} = \sqrt{Var \left| R_p-R_b \right| } 
+\end{equation}
+\begin{equation}
+\label{equation:tracking-error-annually}
+    \text{TE}_{ann} = \text{TE}_{mo} \cdot \sqrt{12}
+\end{equation}
+
+\subsubsection{Information Ratio}
+
+Moreover, some active and passive funds find IR to be a more useful metric than TE \parencite{jorion-enhanced-index-funds-and-tracking-error-optimization}. IR measures a portfolio's excess return $R_p$ compared to the returns of its benchmark $R_b$, relative to TE, as shown in \autoref{equation:information-ratio} \parencite{goodwin-information-ratio}. 
+
+\vspace{-1em}
+\begin{equation}
+\label{equation:information-ratio}
+    \text{IR} = \frac{R_p - R_b}{\sqrt{Var \left| R_p-R_b \right| }}
+\end{equation}
+
+\subsection{Summary of Theoretical Background}
+
+In \autoref{tab:metrics-ranges-implications} we summarise the financial metrics used to assess our portfolio simulation performance in \autoref{Results and discussion}. Looking at a single financial metric is not optimal, as there is often a trade-off between them. For example, the most fundamental trade-off in finance is between risk and return. We will discuss this further in \autoref{Results and discussion}, where we find certain portfolios outperforming in single metrics, but not in others. In an active trading portfolio, return $R_p$ or SR might be the most important metric. 
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{0.5\textwidth}{lX}
+\hline
+Metric & Range \\
+\hline
+$R_p$           & Low (worse) $-$ High (better)             \\
+$\sigma_p$      & Low (better) $-$ High (worse)             \\
+$\alpha$        & Worse $\less$ 0 $\less$ Better            \\
+$\beta$         & Defensive $<$ 1 $<$ Aggressive             \\
+SR              & Worse $<$ 1 $<$ Better                    \\
+TE_{ann}        & Passive index investing $\approx$ 0-1\%   \\ 
+                & Enhanced index investing $\approx$ 1-2\%  \\
+                & Active investing $\approx$ 2-10\%         \\
+IR              & Worse $\less$ 0 $\less$ Better            \\
+\hline
+\end{tabularx}
+\vspace{1em}
+\caption{{Summary of Financial Performance Metrics}}
+\subcaption*{In principle we are looking for as high as possible values for $R_p$, $\alpha$, SR, and IR, and as low as possible values for $\sigma_p$ and TE.  TE and IR become more important in an enhanced index portfolio, which we will discuss in \autoref{Results and discussion}.}
+\label{tab:metrics-ranges-implications}
+\end{table}

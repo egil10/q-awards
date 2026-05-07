@@ -1,0 +1,13 @@
+\section*{Abstract}
+
+In March and September of each year, Euronext decide which companies should be included on the Oslo Stock Exchange Benchmark Index (OSEBX). OSEBX consists of 50-80 companies, all selected from the approximately 200 companies on the Oslo Stock Exchange All Shares Index (OSEAX). We find that new additions and deletions to OSEBX experience significant price effects leading up to the actual date these changes take place, the effective date (ED). These price effects are named the \textit{index effect}.
+
+We use the machine learning (ML) models \textit{eXtreme Gradient Boosting} (\textit{XGBoost}) and \textit{Generalised Linear Model} (\textit{GLM}) to predict index composition to OSEBX in the months leading up to ED. We find that both XGBoost and GLM can predict index composition with accuracy higher than 94\%, 30, 60, and 100 days in advance of ED.
+
+Next, we simulate portfolios from 2010 to 2022, buying predicted additions and selling predicted deletions. We find that GLM models predict few, but high-yielding companies. XGBoost models predict more additions and deletions and create more diverse portfolios. The best GLM and XGBoost portfolios outperformed OSEBX by respectively 0.95\% and 0.32\% per month (11.4\% and 3.84\% per year) in the period from 2010 to 2022. Even after adjusting for risk in a Fama-French 3 Factor Model (FF3), the same portfolios showed significant alphas at a 95\% confidence level.
+
+Lastly, we investigate if the same active trading strategy can yield excess returns in an enhanced index portfolio. In practice, we did this by combining the already simulated portfolios with OSEBX, where we optimised the active share of the portfolio to give the combined portfolio a tracking error of 2\%. For the enhanced index portfolios, the best GLM and XGBoost portfolios outperformed OSEBX by respectively 0.05\% and 0.06\% per month (0.6\% and 0.72\% per year). However, after adjusting for risk factors in FF3 only one of the XGBoost portfolios showed a significant alpha ($p$-value < 0.1).
+
+In short, we find that ML models can predict upcoming changes to OSEBX with high accuracy and that exploiting the index effect using ML can yield excess returns. 
+
+
