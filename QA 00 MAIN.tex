@@ -6,7 +6,7 @@
 %  Image paths reuse the originals from the source thesis (./images/...)
 % =====================================================================
 
-\documentclass[10pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
 % --- packages --------------------------------------------------------
 \usepackage[utf8]{inputenc}
@@ -23,15 +23,21 @@
 \usepackage{float}
 \usepackage{microtype}
 \usepackage{csquotes}
-\usepackage[style=authoryear, backend=bibtex, natbib=true, maxcitenames=2, maxbibnames=3, doi=false, isbn=false, url=false]{biblatex}
-\addbibresource{QA_bib.bib}
+\usepackage[style=apa, backend=biber, natbib=true]{biblatex}
+\addbibresource{00 bib.bib}
+\usepackage{xurl}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 
 \captionsetup{font=footnotesize,labelfont=bf,skip=3pt}
 \setlength{\parskip}{0.22em}
 \setlength{\parindent}{0pt}
-\AtBeginBibliography{\footnotesize\setlength{\itemsep}{0pt}\setlength{\bibitemsep}{0pt}}
+\AtBeginBibliography{%
+  \normalsize
+  \sloppy
+  \setlength{\itemsep}{0pt}%
+  \setlength{\bibitemsep}{0pt}%
+}
 
 \begin{document}
 
@@ -43,11 +49,9 @@
 \input{QA 04 DATA AND METHODOLOGY}
 \input{QA 05 RESULTS}
 \input{QA 06 CONCLUSION}
-
-% ------------------------ REFERENCES ---------------------------------
+\newpage
 \printbibliography[heading=bibintoc,title={References}]
-
-% ------------------------- APPENDIX ----------------------------------
+\newpage
 \appendix
 \input{QA 07 APPENDIX}
 

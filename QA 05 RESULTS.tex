@@ -8,7 +8,7 @@ Table~\ref{tab:acc} reports out-of-sample classification performance over 26 reb
 
 \begin{table}[H]
 \centering
-\footnotesize
+\small
 \begin{tabular}{lccccccc}
 \toprule
 Model & Acc. & Prec. & Sens. & Spec. & F & AUROC & Pred.\ changes \\
@@ -36,7 +36,7 @@ The active strategy confirms that prediction quality translates into investable 
 
 \begin{table}[H]
 \centering
-\footnotesize
+\small
 \setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{lcccccccc}
 \toprule
@@ -58,7 +58,7 @@ XGBC-60 & $-$0.0029 & 0.0066 & 0.0480 & 0.114 & $-$0.0004 & 0.729 & 0.138 & 0.00
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.78\linewidth]{images/trading_long_short.pdf}
+\includegraphics[width=0.7\linewidth]{images/trading_long_short.pdf}
 \caption{\textbf{Cumulative active strategy returns.} Four active overlays with significant FF3 alpha compared with OSEBX. Initial capital is 1 NOK; transaction costs and short-borrow assumptions are included.}
 \label{fig:cumret_active}
 \end{figure}
@@ -71,7 +71,7 @@ The enhanced-index test is the stricter and more commercially relevant version. 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.78\linewidth]{images/enhanced_long_short.pdf}
+\includegraphics[width=0.7\linewidth]{images/enhanced_long_short.pdf}
 \caption{\textbf{Enhanced-index portfolios.} Active overlays are combined with OSEBX and scaled to 2\% annual tracking error. XGBC-30 is the only long--short enhanced variant with significant FF3 alpha.}
 \label{fig:cumret_enh}
 \end{figure}
