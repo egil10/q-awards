@@ -6,16 +6,38 @@
 
 The investable universe is OSEAX. For each firm and each semi-annual rebalancing event from January 2006 to March 2023, I construct snapshots 30, 60 and 100 trading days before the effective date. The predictors are intentionally restricted to variables that an external investor can observe before the announcement: trading status, 12-month electronic-order-book turnover trimmed for extreme days, free-float-adjusted market capitalisation, ICB super-sector, and four lags of OSEBX membership. This restriction is central to the design. The model is not trying to reverse-engineer hidden discretionary decisions; it is trying to process the same public rule-book inputs faster and more consistently than a manual screen.
 
-Price returns use VWAP series from Bloomberg and Refinitiv DataStream, which better approximate institutional execution than closing prices \parencite{madhavan-vwap,bloomberg-terminal,lseg-refinitiv}. Norwegian Fama--French factors and the risk-free rate are from \textcite{bernt-fama-french} and \textcite{bernt-risk-free}. After cleaning, the three horizon panels contain 5{,}983, 5{,}924 and 5{,}891 firm-event observations. All reported performance is out of sample: for each test rebalancing, the training set contains only events whose cut-off dates are strictly earlier.
+Price returns use VWAP series from Bloomberg and Refinitiv DataStream, which better approximate institutional execution than closing prices \parencite{madhavan-vwap,bloomberg-terminal,lseg-refinitiv}. Norwegian Fama--French factors and the risk-free rate are from \textcite{bernt-fama-french} and \textcite{bernt-risk-free}. After cleaning, the three horizon panels contain 5{,}983, 5{,}924 and 5{,}891 firm-event observations. All reported performance is out of sample: for each test rebalancing, the training set contains only events whose cut-off dates are strictly earlier, so the panel grows event by event in a strict expanding-window design with no look-ahead from future fundamentals or future membership.
 
-\subsection{Models and conditional threshold}
+\subsection{Logistic GLM benchmark}
 
-The first classifier is a binomial logistic GLM,
+The first classifier is a binomial logistic generalised linear model with logit link, estimated by maximum likelihood:
 \begin{equation}
 \Pr(Y_{i,t}=1 \mid X_{i,t}) = \frac{\exp(\beta^\top X_{i,t})}{1+\exp(\beta^\top X_{i,t})},
+\qquad
+\hat{\beta} \;=\; \arg\max_{\beta}\;\sum_{(i,t)}\!\Big[y_{i,t}\,\beta^\top X_{i,t} - \log\!\big(1+\exp(\beta^\top X_{i,t})\big)\Big],
 \label{eq:glm}
 \end{equation}
-where $Y_{i,t}=1$ means that firm $i$ is in OSEBX after rebalancing $t$. The second is XGBoost, a regularised boosted-tree model that can capture non-linear interactions between size, liquidity, sector and past membership \parencite{xgboost-a-scaleable-tree-boosting-system}. Hyperparameters are fixed across folds to avoid turning the backtest into a tuning exercise.
+where $Y_{i,t}=1$ means that firm $i$ is in OSEBX after rebalancing $t$ \parencite{glm-generalized-linear-models}. The GLM serves as a calibrated linear baseline whose coefficients are directly interpretable in log-odds units; categorical predictors (sector, trading status) enter through one-hot indicators and continuous predictors (turnover, free float) through level and log transforms.
+
+\subsection{XGBoost classifier}
+
+The second classifier is XGBoost \parencite{xgboost-a-scaleable-tree-boosting-system}, a regularised gradient-boosted tree ensemble that captures non-linear interactions between size, liquidity, sector and lagged membership. The model fits an additive function $\hat{y}_i=\sum_{k=1}^{K} f_k(X_i)$ with $f_k\in\mathcal{F}$ a regression tree, by minimising at each iteration $k$ the regularised objective
+\begin{equation}
+\mathcal{L}^{(k)} \;=\; \sum_{i}\ell\!\big(y_i,\,\hat{y}_i^{(k-1)}+f_k(X_i)\big) \;+\; \Omega(f_k),
+\qquad
+\Omega(f)\;=\;\gamma T \;+\; \tfrac{1}{2}\lambda\,\lVert w\rVert^{2},
+\label{eq:xgb-obj}
+\end{equation}
+where $\ell$ is the per-observation log-loss, $T$ is the number of leaves of $f_k$, $w$ the vector of leaf weights, and $(\gamma,\lambda)$ govern complexity. Expanding $\ell$ to second order around $\hat{y}_i^{(k-1)}$ with gradient $g_i=\partial_{\hat{y}}\ell$ and Hessian $h_i=\partial^{2}_{\hat{y}}\ell$ \parencite{friedman-greedy-function-approximation,friedman-additive-logistic-regression}, the optimal weight in leaf $j$ and the gain from splitting a parent into children $(L,R)$ are
+\begin{equation}
+w_{j}^{\star} \;=\; -\frac{\sum_{i\in I_j} g_i}{\sum_{i\in I_j} h_i + \lambda},
+\qquad
+\mathrm{Gain} \;=\; \tfrac{1}{2}\!\left[\frac{(\sum_{L} g_i)^2}{\sum_{L} h_i + \lambda} + \frac{(\sum_{R} g_i)^2}{\sum_{R} h_i + \lambda} - \frac{(\sum_{L\cup R} g_i)^2}{\sum_{L\cup R} h_i + \lambda}\right] - \gamma,
+\label{eq:xgb-leaf}
+\end{equation}
+with $I_j$ the indices routed to leaf $j$. Using both first- and second-order information stabilises split selection in the highly imbalanced membership panel, where the GLM gradient alone provides little information about rare flips of $Y_{i,t}$. Hyperparameters are fixed across folds (maximum depth 6, learning rate $\eta=0.3$, 100 boosting rounds, default subsampling) so that the backtest does not absorb tuning luck from a small number of test events \parencite{kaggle-xgboost-hyperparameter,dmlc-xgboost-hyperparameter}.
+
+\subsection{Conditional posterior-probability threshold}
 
 The main methodological issue is class persistence. Most current constituents remain in the index and most non-constituents remain out, so ordinary 0--1 loss rewards a model that predicts no additions or deletions. I therefore replace the standard threshold $\theta$ with a threshold conditioned on prior membership:
 \begin{equation}
@@ -30,6 +52,21 @@ The main methodological issue is class persistence. Most current constituents re
 \end{equation}
 With $\varepsilon>0$, a current constituent needs stronger evidence to be classified as staying, while a current non-constituent needs less evidence to be classified as entering. The mechanism is deliberately simple: it trades a small amount of calibration accuracy for more addition and deletion signals. I set $\theta=0.6$ and $\varepsilon=0.2$ on the training data. In the results, XGBB denotes standard XGBoost and XGBC denotes XGBoost with this conditional threshold.
 
+\subsection{Performance metrics}
+
+From the out-of-sample confusion matrix with cells $\{TP,\,FP,\,FN,\,TN\}$ I report accuracy, precision, sensitivity, specificity, and the balanced F-score:
+\begin{equation}
+\begin{aligned}
+&\text{Acc}=\frac{TP+TN}{TP+FP+FN+TN},
+\quad \text{Prec}=\frac{TP}{TP+FP},
+\quad \text{Sens}=\frac{TP}{TP+FN}, \\[2pt]
+&\text{Spec}=\frac{TN}{TN+FP},
+\quad F=\frac{TP}{TP+\tfrac{1}{2}(FP+FN)}.
+\end{aligned}
+\label{eq:metrics}
+\end{equation}
+I additionally report AUROC, the area under the receiver-operating curve traced by sensitivity against $1-$specificity as the probability threshold sweeps $[0,1]$ \parencite{fawcett-an-introduction-to-roc-analysis,hanley-area-under-a-receiver-operating-curve}. AUROC is threshold-independent, so it measures the quality of the underlying probability ranking, while the metrics in equation~(\ref{eq:metrics}) are evaluated at the conditional threshold and quantify the operating point that a trader actually faces.
+
 \subsection{Portfolio tests}
 
 For each rebalancing event, predicted additions $\mathcal{A}_t$ are bought and predicted deletions $\mathcal{D}_t$ are shorted at the forecast date, then closed at the effective date. Trade returns are equally weighted:
@@ -42,11 +79,20 @@ r_i^{long}=\frac{p_1-p_0}{p_0},\quad
 r_i^{short}=\frac{p_0-p_1}{p_0}.
 \label{eq:retdef}
 \end{equation}
-The active simulation applies 4 bps per leg in transaction costs \parencite{dnb-transaction-costs}, a 4\% annual short-borrow charge \parencite{nordnet-short-interest-rate}, and a forced buy-back cap at a 100\% short loss. Outside active event windows the capital is invested in OSEBX.
+The active simulation applies 4 bps per leg in transaction costs \parencite{dnb-transaction-costs}, a 4\% annual short-borrow charge \parencite{nordnet-short-interest-rate}, and a forced buy-back cap at a 100\% short loss. Outside active event windows the capital is invested in OSEBX, so the strategy is fully invested at all times and avoids the cash-drag bias that affects long-only event studies.
 
 The enhanced-index version combines OSEBX with the active sleeve:
 \begin{equation}
-r_t^E=s r_t^A+(1-s)r_t^{OSEBX},
+r_t^E=s\,r_t^A+(1-s)\,r_t^{OSEBX},
 \label{eq:enhanced}
 \end{equation}
-where $s$ is the largest realised weight that keeps annual tracking error below 2\%, a common enhanced-index risk budget \parencite{ssg-tracking-error-enhanced}. In this version, shorted deletion names are treated as sales from the passive inventory, so the short-borrow charge is removed. Risk-adjusted performance is measured with CAPM and Norwegian Fama--French three-factor regressions over January 2010 to May 2022, the longest period with factor data.
+where $s$ is the largest realised weight that keeps annual tracking error below 2\%, a common enhanced-index risk budget \parencite{ssg-tracking-error-enhanced}. The weight $s$ is calibrated by grid search on the training window so that ex-post tracking error against OSEBX, $\sigma(r_t^E-r_t^{OSEBX})\sqrt{12}$, does not exceed the 2\% budget. In this version, shorted deletion names are treated as sales from the passive inventory, so the short-borrow charge is removed.
+
+\subsection{Risk-adjusted performance}
+
+Monthly performance is decomposed using both the CAPM and the Norwegian Fama--French three-factor model \parencite{fama-french-common-risk-factors-in-the-returns-on-stocks-and-bonds,bernt-fama-french}:
+\begin{equation}
+r_{p,t}-r_{f,t} \;=\; \alpha \;+\; \beta_M\!\left(r_{M,t}-r_{f,t}\right) \;+\; \beta_S\,\mathrm{SMB}_t \;+\; \beta_H\,\mathrm{HML}_t \;+\; \epsilon_t,
+\label{eq:ff3}
+\end{equation}
+where $r_{M,t}$ is the OSEAX market return and SMB and HML are the Norwegian size and book-to-market factors. The CAPM specification restricts $\beta_S=\beta_H=0$. Alphas are reported in monthly units; $t$-statistics use Newey--West standard errors with one lag to absorb residual autocorrelation. The factor sample runs from January 2010 to May 2022, the longest period over which Norwegian factor returns are jointly available.

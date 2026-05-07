@@ -4,7 +4,7 @@
 
 \subsection{Prediction: accuracy is not enough}
 
-Table~\ref{tab:acc} reports out-of-sample classification performance over 26 rebalancing events. The rule-book variables contain strong signal: every learned model has AUROC above 0.97, even 100 trading days before the effective date. However, accuracy alone gives the wrong investment ranking. The naive model that simply repeats last period's membership has the highest accuracy, 95.07\%, but predicts no changes and therefore cannot be traded.
+Table~\ref{tab:acc} reports out-of-sample classification performance over 26 rebalancing events, summarising the metrics defined in equation~(\ref{eq:metrics}). The rule-book variables contain strong signal: every learned model has AUROC above 0.97, even 100 trading days before the effective date. The 30-day GLM and XGBoost rankings are statistically indistinguishable on AUROC, consistent with the variable-importance plots in the appendix where lagged membership and free float dominate both specifications. However, accuracy alone gives the wrong investment ranking. The naive model that simply repeats last period's membership has the highest accuracy, 95.07\%, but predicts no changes and therefore cannot be traded.
 
 \begin{table}[H]
 \centering
@@ -28,11 +28,11 @@ XGBC-60  & 0.9317 & 0.9318 & 0.8834 & 0.9609 & 0.9069 & 0.9817 & 247 \\
 \label{tab:acc}
 \end{table}
 
-The conditional threshold does what it is designed to do. XGBC-30 reduces accuracy by 1.4 percentage points relative to XGBB-30, but increases predicted changes from 174 to 271. This is not a cosmetic difference: an index-event strategy earns nothing from correctly predicting that Equinor remains in the benchmark. It earns from the small set of names whose membership changes, and the model must create enough of those signals to diversify event risk.
+The conditional threshold does what it is designed to do. XGBC-30 reduces accuracy by 1.4 percentage points relative to XGBB-30, but increases predicted changes from 174 to 271, a 56\% rise in actionable signal. Sensitivity falls from 0.903 to 0.878 while specificity is preserved, consistent with the ranking in equation~(\ref{eq:cppt}): the threshold is asymmetric in $Y_{i,t-1}$, so it shifts the operating point along the ROC curve in figure~\ref{fig:app_roc} rather than degrading the underlying probability ranking. This is not a cosmetic difference: an index-event strategy earns nothing from correctly predicting that Equinor remains in the benchmark. It earns from the small set of names whose membership changes, and the model must create enough of those signals to diversify event risk.
 
 \subsection{Active long--short overlays}
 
-The active strategy confirms that prediction quality translates into investable return, but through two different channels. Table~\ref{tab:ff3} summarises monthly performance over the factor-test window. OSEBX earned 0.95\% per month with 4.23\% volatility. GLM-60 and GLM-100 produce the highest excess returns, but they do so with concentrated books and high volatility. XGBC-30 produces lower raw excess return, but is closer to the benchmark in beta and tracking error.
+The active strategy confirms that prediction quality translates into investable return, but through two different channels. Table~\ref{tab:ff3} summarises monthly performance over the factor-test window. The reported $\alpha_{FF3}$ column is the intercept of the regression in equation~(\ref{eq:ff3}), expressed in monthly units; significance is tested with Newey--West standard errors. OSEBX earned 0.95\% per month with 4.23\% volatility. GLM-60 and GLM-100 produce the highest excess returns, but they do so with concentrated books and high volatility. XGBC-30 produces lower raw excess return, but is closer to the benchmark in beta and tracking error.
 
 \begin{table}[H]
 \centering
@@ -67,7 +67,7 @@ For a discretionary active mandate, the GLM portfolios are attractive because th
 
 \subsection{Enhanced-index implementation}
 
-The enhanced-index test is the stricter and more commercially relevant version. Each active overlay is scaled to the largest weight consistent with 2\% annual tracking error against OSEBX. This constraint sharply penalises concentrated portfolios: GLM-60 can only receive a 4.1\% active weight, while XGBC-30 can receive 22.1\%. After scaling, the ranking reverses. GLM still adds some raw return, but only XGBC-30 produces a positive FF3 alpha that is statistically distinguishable from zero at the 10\% level.
+The enhanced-index test is the stricter and more commercially relevant version. Each active overlay is scaled to the largest weight consistent with 2\% annual tracking error against OSEBX, so that the realised mix in equation~(\ref{eq:enhanced}) satisfies $\sigma(r_t^E-r_t^{OSEBX})\sqrt{12}\le 0.02$. This constraint sharply penalises concentrated portfolios: GLM-60 can only receive a 4.1\% active weight, while XGBC-30 can receive 22.1\%. The mechanism is mechanical---the active weight scales as the inverse of the active-return volatility---so the same overlay that wins on raw alpha can lose on capacity once it is forced through a tight risk budget. After scaling, the ranking reverses. GLM still adds some raw return, but only XGBC-30 produces a positive FF3 alpha that is statistically distinguishable from zero at the 10\% level.
 
 \begin{figure}[H]
 \centering
