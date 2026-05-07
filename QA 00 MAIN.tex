@@ -1,20 +1,19 @@
 % =====================================================================
-%  CFA Quant Awards 2026 — Submission Paper (DRIVER)
-%  Distilled from a 100+ page Master's thesis into a 5–7 page format.
+%  CFA Quant Awards 2026 -- Submission Paper (DRIVER)
+%  Distilled from a 100+ page Master's thesis into a 5-7 page format.
 %
-%  Compile with:  pdflatex -> biber -> pdflatex -> pdflatex
+%  Compile with: pdflatex -> bibtex -> pdflatex -> pdflatex
 %  Image paths reuse the originals from the source thesis (./images/...)
-%  Bibliography reuses the original 00 bib.bib (APA, biber backend).
 % =====================================================================
 
-\documentclass[11pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article}
 
 % --- packages --------------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[english]{babel}
-\usepackage[margin=1in]{geometry}
+\usepackage[top=0.72in,bottom=0.78in,left=0.74in,right=0.74in]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -24,14 +23,15 @@
 \usepackage{float}
 \usepackage{microtype}
 \usepackage{csquotes}
-\usepackage[style=apa, backend=biber, natbib=true]{biblatex}
-\addbibresource{00 bib.bib}
+\usepackage[style=authoryear, backend=bibtex, natbib=true, maxcitenames=2, maxbibnames=3, doi=false, isbn=false, url=false]{biblatex}
+\addbibresource{QA_bib.bib}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 
-\captionsetup{font=small,labelfont=bf,skip=4pt}
-\setlength{\parskip}{0.4em}
+\captionsetup{font=footnotesize,labelfont=bf,skip=3pt}
+\setlength{\parskip}{0.22em}
 \setlength{\parindent}{0pt}
+\AtBeginBibliography{\footnotesize\setlength{\itemsep}{0pt}\setlength{\bibitemsep}{0pt}}
 
 \begin{document}
 
@@ -43,7 +43,12 @@
 \input{QA 04 DATA AND METHODOLOGY}
 \input{QA 05 RESULTS}
 \input{QA 06 CONCLUSION}
-\newpage
+
+% ------------------------ REFERENCES ---------------------------------
 \printbibliography[heading=bibintoc,title={References}]
+
+% ------------------------- APPENDIX ----------------------------------
+\appendix
+\input{QA 07 APPENDIX}
 
 \end{document}

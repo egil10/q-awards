@@ -1,0 +1,43 @@
+% ----------------------------- APPENDIX ------------------------------
+\section{Additional Diagnostics}
+\label{app:diagnostics}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{images/beta_plot.pdf}
+    \caption{Predicted changes as the conditional-threshold parameter $\varepsilon$ varies.}
+    \label{fig:app_beta}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{images/roc_curve.pdf}
+    \caption{ROC curves for 30-day GLM and XGBoost benchmark forecasts.}
+    \label{fig:app_roc}
+\end{subfigure}
+\caption{\textbf{Signal calibration diagnostics.} The threshold diagnostic shows why $\varepsilon=0.2$ is a pragmatic compromise: it materially increases signal count without pushing the strategy toward indiscriminate turnover. The ROC curve confirms that the underlying probability rankings remain highly informative before the announcement date.}
+\label{fig:app_signal_diagnostics}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\linewidth]{images/vip.pdf}
+\caption{\textbf{Variable importance for 30-day forecasts.} Lagged index membership dominates both models, but free float, turnover, trading status and sector supply the marginal information needed to identify additions and deletions.}
+\label{fig:app_vip}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\linewidth]{images/machinelearning_res.pdf}
+\caption{\textbf{Prediction performance through time.} Period-by-period accuracy, predicted changes and captured changes for the 30-day GLM, XGBB and XGBC specifications. The figure highlights the recurring trade-off between maximum accuracy and economically useful signal density.}
+\label{fig:app_ml_time}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\linewidth]{images/enhanced_long_only.pdf}
+\caption{\textbf{Long-only enhanced-index robustness check.} Long-only overlays also track OSEBX closely after scaling to the 2\% tracking-error budget, but none generates significant FF3 alpha in the thesis backtest; this supports the paper's focus on the long--short XGBC-30 variant.}
+\label{fig:app_enhanced_long_only}
+\end{figure}
